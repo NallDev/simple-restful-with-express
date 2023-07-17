@@ -3,30 +3,98 @@
 
 <head>
     <meta charset="utf-8">
-    <title>BLOG</title>
+    <title>MUSIC</title>
     <link rel="stylesheet" href="./stylesheets/style.css" type="text/css" />
     <script src="/send_url.js"></script>
 </head>
 
-<body>
-    <div class="top">
-        <div class="wrapper">
-            <div class="content">
-                <% data.forEach((post) => {%>
-                <% const { title, body, published } = post %>
-                <h2 class="text-amber-700"><%= title %></h2>
-                <% }) %>
-
-                <h2>Login</h2>
-                <form action="/" method="post">
-                    <p class="text-amber-700">Title</p>
-                    <input type="text" name="title">
-                    <p>Body</p>
-                    <input type="text" name="body">
-                    <input type="submit" value="Send">
-                </form>
+<body class="bg-gray-100">
+    <div class="flex h-screen">
+        <!-- Aside - Playlist -->
+        <aside class="w-1/4 p-4 bg-white">
+            <h2 class="text-xl font-bold mb-4 sticky top-0">Playlist</h2>
+            <button id="change"
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded sticky top-8">Tambah
+                Playlist</button>
+            <div id="playlist" class="mt-6 h-4/5 overflow-y-auto">
+                <!-- Card Playlist -->
+                <div class="flex items-center mb-4 hover:bg-gray-100 rounded-lg p-4">
+                    <img src="https://i.pinimg.com/originals/82/5d/95/825d953be6305b901da15d0f05b0b86c.jpg"
+                        alt="Playlist 1" class="w-12 h-12 mr-4">
+                    <h3 class="text-lg font-semibold">Playlist 1</h3>
+                </div>
             </div>
+        </aside>
+
+        <!-- Main Content - Song Cards -->
+        <main class="w-3/4 p-4 overflow-y-auto">
+            <h2 class="text-xl font-bold mb-4">Daftar Lagu</h2>
+            <div class="grid grid-cols-3 gap-4">
+                <% data.forEach((post) => {%>
+                <% const { title, musicPath, imageUrl, id } = post %>
+                <div id="<%= id %>" class="bg-white p-4 shadow rounded group relative overflow-hidden" data-src="<%= musicPath %>">
+                    <img src="<%= imageUrl %>" alt="Song 1"
+                        class="w-full mb-2">
+                    <h3 class="text-lg font-semibold"><%= title %></h3>
+                    <div
+                        class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 absolute inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white" viewBox="0 0 20 20"
+                            fill="currentColor">
+                            <path d="M5 4l10 6-10 6V4zm2 2v8l6-4-6-4z" />
+                        </svg>
+                    </div>
+                </div>
+                <% }) %>
+            </div>
+        </main>
+        <!-- Player Container -->
+        <div class="fixed bottom-0 left-0 w-full bg-white p-4 flex items-center">
+            <audio id="audioPlayer" class="flex-grow" autoplay="autoplay" controls="controls">
+                <source src="" type="audio/mpeg">
+            </audio>
         </div>
+    </div>
+
+    <script>
+        // Ambil elemen audio
+        const audioPlayer = document.getElementById('audioPlayer');
+
+        // Ambil button dengan id "change"
+        const change1 = document.getElementById('64b5560c70bdf17afee87499');
+        const change2 = document.getElementById('64b5566670bdf17afee8749b');
+
+        // Tambahkan event listener pada button
+        change1.addEventListener('click', () => {
+            // Dapatkan src dari atribut data-src pada button
+            const src = change1.dataset.src;
+
+            // Ubah src pada elemen audio
+            audioPlayer.src = src;
+
+            // Memulai atau menghentikan pemutaran lagu
+            if (audioPlayer.paused) {
+                audioPlayer.play();
+            } else {
+                audioPlayer.pause();
+            }
+        });
+
+        change2.addEventListener('click', () => {
+            // Dapatkan src dari atribut data-src pada button
+            const src = change2.dataset.src;
+
+            // Ubah src pada elemen audio
+            audioPlayer.src = src;
+
+            // Memulai atau menghentikan pemutaran lagu
+            if (audioPlayer.paused) {
+                audioPlayer.play();
+            } else {
+                audioPlayer.pause();
+            }
+        });
+    </script>
 </body>
+
 
 </html>

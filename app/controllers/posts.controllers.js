@@ -15,8 +15,8 @@ exports.findAll = (req, res) => {
 exports.create = (req, res) => {
     const post = new Post({
         title: req.body.title,
-        body: req.body.body,
-        published: req.body.published ? req.body.published : false,
+        musicPath: req.body.musicPath,
+        imageUrl: req.body.imageUrl,
     })
 
     post.save(post)

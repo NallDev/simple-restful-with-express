@@ -2,8 +2,8 @@ module.exports = (mongoose) => {
     const schema = mongoose.Schema(
         {
             title: String,
-            body: String,
-            published: Boolean
+            musicPath: String,
+            imageUrl: String,
         },
         {
             timestamps: true
