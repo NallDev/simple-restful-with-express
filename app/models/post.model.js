@@ -2,8 +2,13 @@ module.exports = (mongoose) => {
     const schema = mongoose.Schema(
         {
             title: String,
+            artist: String,
             musicPath: String,
             imageUrl: String,
+            counter: {
+                type: Number,
+                default: 0,
+            },
         },
         {
             timestamps: true

@@ -13,9 +13,9 @@
         <!-- Aside - Playlist -->
         <aside class="w-1/4 p-4 bg-white">
             <h2 class="text-xl font-bold mb-4 sticky top-0">Playlist</h2>
-            <button id="change"
+            <button id="addPlaylist"
                 class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded sticky top-8">Tambah
-                Playlist</button>
+                Lagu</button>
             <div id="playlist" class="mt-6 h-4/5 overflow-y-auto">
                 <!-- Card Playlist -->
                 <div class="flex items-center mb-4 hover:bg-gray-100 rounded-lg p-4">
@@ -27,14 +27,14 @@
         </aside>
 
         <!-- Main Content - Song Cards -->
-        <main class="w-3/4 p-4 overflow-y-auto">
+        <main class="w-3/4 p-4 pb-40 overflow-y-auto">
             <h2 class="text-xl font-bold mb-4">Daftar Lagu</h2>
             <div class="grid grid-cols-3 gap-4">
                 <% data.forEach((post) => {%>
                 <% const { title, musicPath, imageUrl, id } = post %>
-                <div id="<%= id %>" class="bg-white p-4 shadow rounded group relative overflow-hidden" data-src="<%= musicPath %>">
-                    <img src="<%= imageUrl %>" alt="Song 1"
-                        class="w-full mb-2">
+                <div id="<%= id %>" class="all-song bg-white p-4 shadow rounded group relative overflow-hidden"
+                    data-src="<%= musicPath %>" data-id="<%= id %>">
+                    <img src="<%= imageUrl %>" alt="Song 1" class="w-full mb-2">
                     <h3 class="text-lg font-semibold"><%= title %></h3>
                     <div
                         class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 absolute inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50">
@@ -55,43 +55,101 @@
         </div>
     </div>
 
+    <!-- Modal -->
+    <div id="modal" class="fixed z-10 inset-0 overflow-y-auto hidden">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg p-8">
+                <h2 class="text-xl font-bold mb-4">Tambah Lagu</h2>
+                <form id="playlistForm" action="/" method="post">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 font-bold mb-2" for="judul">Judul</label>
+                        <input type="text" name="title" id="judul" class="border border-gray-300 rounded-lg p-2 w-full"
+                            required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 font-bold mb-2" for="nama">Artis</label>
+                        <input type="text" name="artist" id="nama" class="border border-gray-300 rounded-lg p-2 w-full"
+                            required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 font-bold mb-2" for="hobi">Lagu</label>
+                        <select name="musicPath" id="music" class="border border-gray-300 rounded-lg p-2 w-full" required>
+                            <option value="">Pilih Lagu</option>
+                            <option value="/music/remidi.mp3">Remidi (Tulus)</option>
+                            <option value="/music/hati.mp3">Hati-hati di jalan(Tulus)</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 font-bold mb-2" for="hobi">Poster</label>
+                        <select name="imageUrl" id="image" class="border border-gray-300 rounded-lg p-2 w-full" required>
+                            <option value="">Pilih poster</option>
+                            <option value="https://i.scdn.co/image/ab67616d0000b27371c65edbeed32af70b900637">Gambar 1</option>
+                            <option value="https://i.pinimg.com/originals/82/5d/95/825d953be6305b901da15d0f05b0b86c.jpg">Gambar 2</option>
+                        </select>
+                    </div>
+                    <div class="flex justify-end">
+                        <button type="cancel" id="btnBatal"
+                            class="mr-2 bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">Batal</button>
+                        <button type="submit"
+                            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Kirim</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // Ambil elemen audio
+        const cards = document.querySelectorAll('.all-song');
         const audioPlayer = document.getElementById('audioPlayer');
+        const modal = document.getElementById('modal');
+        const addPlaylistButton = document.getElementById('addPlaylist');
+        const btnCancel = document.getElementById('btnBatal');
+        const form = document.getElementById('playlistForm');
 
-        // Ambil button dengan id "change"
-        const change1 = document.getElementById('64b5560c70bdf17afee87499');
-        const change2 = document.getElementById('64b5566670bdf17afee8749b');
+        cards.forEach(card => {
+            card.addEventListener('click', () => {
+                const songId = card.getAttribute('data-id');
+                const src = card.dataset.src;
 
-        // Tambahkan event listener pada button
-        change1.addEventListener('click', () => {
-            // Dapatkan src dari atribut data-src pada button
-            const src = change1.dataset.src;
+                audioPlayer.src = src;
 
-            // Ubah src pada elemen audio
-            audioPlayer.src = src;
-
-            // Memulai atau menghentikan pemutaran lagu
-            if (audioPlayer.paused) {
-                audioPlayer.play();
-            } else {
-                audioPlayer.pause();
-            }
+                if (audioPlayer.paused) {
+                    audioPlayer.play();
+                } else {
+                    audioPlayer.pause();
+                }
+                console.log(`click ${songId}`)
+                updateCounter(songId);
+            });
         });
 
-        change2.addEventListener('click', () => {
-            // Dapatkan src dari atribut data-src pada button
-            const src = change2.dataset.src;
+        function updateCounter(songId) {
+            fetch(`http://localhost:3000/api/posts/${songId}/counter`, {
+                    method: 'put',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        }
 
-            // Ubah src pada elemen audio
-            audioPlayer.src = src;
+        addPlaylistButton.addEventListener('click', () => {
+            modal.classList.remove('hidden');
+        });
 
-            // Memulai atau menghentikan pemutaran lagu
-            if (audioPlayer.paused) {
-                audioPlayer.play();
-            } else {
-                audioPlayer.pause();
-            }
+        btnCancel.addEventListener('click', () => {
+            modal.classList.add('hidden');
+        });
+
+        form.addEventListener('submit', (event) => {
+            modal.classList.add('hidden');
         });
     </script>
 </body>

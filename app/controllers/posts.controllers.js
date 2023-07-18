@@ -3,6 +3,7 @@ const Post = db.posts
 
 exports.findAll = (req, res) => {
     Post.find()
+    .sort({ counter: -1 })
     .then((result) => {
         res.send(result)
     }).catch((err) => {
@@ -42,8 +43,28 @@ exports.findOne = (req, res) => {
     });
 }
 
+exports.updateCounter = (req, res) => {
+    const filter = {_id: req.params.id}
+
+    Post.findOneAndUpdate(filter, {$inc: {counter: 1}})
+    .then((result) => {
+        if(!result) {
+            res.status(404).send({
+                message: `${req.body}`
+            })
+        } else {
+            res.send({
+                message:"data was updated"
+            })
+        }
+    }).catch((err) => {
+        res.status(409).send({
+            message: err.message || "Some error when update data"
+        })
+    });
+}
+
 exports.update = (req, res) => {
-    const id = req.params.id
     const filter = {_id: req.params.id}
 
     Post.findOneAndUpdate(filter, req.body)

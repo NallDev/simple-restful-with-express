@@ -32,6 +32,28 @@ app.get('/', (req, res) => {
 });
 
 app.post('/', (req, res) => {
+    const reqBody = {
+        title: req.body.title,
+        artist: req.body.artist,
+        musicPath: req.body.musicPath,
+        imageUrl: req.body.imageUrl,
+    }
+
+    fetch(`http://localhost:3000/api/posts/`, {
+        method: 'post',
+        body: JSON.stringify(reqBody),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then((result) => {
+        res.redirect('/')
+    }).catch((err) => {
+        console.log(err)
+    });
+})
+
+app.post('/', (req, res) => {
     const id = '64b408ff0e1e2f353a2d1c3a'
     const title = req.body.title
     const body = req.body.body
